@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bulat.advandroidhomework1.R;
@@ -32,7 +33,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(RecordHolder holder, int position) {
         Record record = records.get(position);
         Log.d("myLog", record.getIndexStringFormat());
-        holder.record.setText(record.getIndexStringFormat());
+        holder.mTextView.setText(record.getIndexStringFormat());
+        holder.mLinearLayout.setBackgroundColor(holder.mLinearLayout.getContext().getResources()
+                .getColor(record.getIndex() % 2 == 0 ? R.color.grey_background : R.color.white_background));
     }
 
     @Override
@@ -41,11 +44,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     class RecordHolder extends RecyclerView.ViewHolder {
-        private TextView record;
+        private TextView mTextView;
+        private LinearLayout mLinearLayout;
 
         public RecordHolder(View itemView) {
             super(itemView);
-            record = (TextView) itemView.findViewById(R.id.recycler_view_record);
+            mTextView = (TextView) itemView.findViewById(R.id.recycler_view_record);
+            mLinearLayout = (LinearLayout) itemView.findViewById(R.id.recycler_view);
         }
     }
 }
