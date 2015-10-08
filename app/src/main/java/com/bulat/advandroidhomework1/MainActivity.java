@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.bulat.advandroidhomework1.adapters.RecyclerViewAdapter;
+import com.bulat.advandroidhomework1.model.Record;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +15,13 @@ import java.util.List;
 
 public class MainActivity extends Activity {
     private RecyclerView mRecyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        List<Integer> list = new ArrayList<>();
+        List<Record> list = new ArrayList<>();
         populateIntegers(list);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -32,10 +34,11 @@ public class MainActivity extends Activity {
         mRecyclerView.setItemAnimator(itemAnimator);
     }
 
-    private void populateIntegers(List<Integer> list) {
+    private void populateIntegers(List<Record> list) {
         for (int i = 1; i <= 1000; ++i) {
-            list.add(i);
+            list.add(new Record(i));
         }
     }
+
 
 }
