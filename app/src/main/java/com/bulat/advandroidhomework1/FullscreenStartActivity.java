@@ -16,7 +16,7 @@ public class FullscreenStartActivity extends AppCompatActivity {
         new PreloadTask().execute();
     }
 
-    class PreloadTask extends AsyncTask<Void, Void, Void> {
+    private class PreloadTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
             try {

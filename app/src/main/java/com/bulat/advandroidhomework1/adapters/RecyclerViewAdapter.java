@@ -1,5 +1,6 @@
 package com.bulat.advandroidhomework1.adapters;
 
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,8 +35,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         Record record = records.get(position);
         Log.d("myLog", record.getIndexStringFormat());
         holder.mTextView.setText(record.getIndexStringFormat());
-        holder.mLinearLayout.setBackgroundColor(holder.mLinearLayout.getContext().getResources()
-                .getColor(record.getIndex() % 2 == 0 ? R.color.grey_background : R.color.white_background));
+        holder.mLinearLayout.setBackgroundColor(ContextCompat.getColor(holder.mLinearLayout.getContext(),
+                record.getIndex() % 2 == 0 ? R.color.grey_background : R.color.white_background));
     }
 
     @Override
@@ -44,8 +45,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     class RecordHolder extends RecyclerView.ViewHolder {
-        private TextView mTextView;
-        private LinearLayout mLinearLayout;
+        private final TextView mTextView;
+        private final LinearLayout mLinearLayout;
 
         public RecordHolder(View itemView) {
             super(itemView);
