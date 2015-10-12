@@ -1,13 +1,36 @@
 package com.bulat.advandroidhomework1.model;
 
+import android.content.Context;
+import android.content.res.XmlResourceParser;
+import android.text.TextUtils;
+
+import com.bulat.advandroidhomework1.R;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by bulat on 08.10.15.
  */
 public class Record {
     private int index;
     private String indexString;
+    private static Map<Integer, String> stringFormatIntegerMap = null;
 
     public Record(int index) {
+        if (stringFormatIntegerMap == null) {
+            try {
+                throw new Exception("Run buildStringFormatOfIntegers method in Record class first");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         setIndex(index);
     }
 
@@ -24,168 +47,72 @@ public class Record {
         return indexString;
     }
 
+    public static void buildStringFormatOfIntegers(Context context) {
+        XmlResourceParser xmlResourceParser = context.getResources().getXml(R.xml.string_format_integer_map);
+        stringFormatIntegerMap = new HashMap<>();
+        Integer key = null;
+        String value = null;
+        try {
+            int eventType = xmlResourceParser.getEventType();
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                switch (eventType) {
+                    case XmlPullParser.START_TAG:
+                        if (xmlResourceParser.getName().equals("entry")) {
+                            key = Integer.valueOf(xmlResourceParser.getAttributeValue(null, "key"));
+                            if (key == null) {
+                                xmlResourceParser.close();
+                                return;
+                            }
+                        }
+                        break;
+                    case XmlPullParser.END_TAG:
+                        if (xmlResourceParser.getName().equals("entry")) {
+                            stringFormatIntegerMap.put(key, value);
+                            key = null;
+                            value = null;
+                        }
+                        break;
+                    case XmlPullParser.TEXT:
+                        if (key != null) {
+                            value = xmlResourceParser.getText();
+                        }
+                        break;
+                }
+
+                eventType = xmlResourceParser.next();
+            }
+        } catch (XmlPullParserException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private String getStringFormatOfInteger(Integer number) {
-        Integer copyOfNumber = number;
-        int ones = copyOfNumber % 10;
-        StringBuilder stringBuilder = new StringBuilder();
-        copyOfNumber /= 10;
-        int tens = 0;
-        if (copyOfNumber != 0) {
-            tens = copyOfNumber % 10;
-            copyOfNumber /= 10;
-            if (copyOfNumber != 0) {
-                int hundreds = copyOfNumber % 10;
-                copyOfNumber /= 10;
-                if (copyOfNumber != 0) {
-                    return "тысяча";
-                }
-                String hundredsStringFormat;
-                switch (hundreds) {
-                    case 1:
-                        hundredsStringFormat = "сто";
-                        break;
-                    case 2:
-                        hundredsStringFormat = "двести";
-                        break;
-                    case 3:
-                        hundredsStringFormat = "триста";
-                        break;
-                    case 4:
-                        hundredsStringFormat = "четыреста";
-                        break;
-                    case 5:
-                        hundredsStringFormat = "пятьсот";
-                        break;
-                    case 6:
-                        hundredsStringFormat = "шестьсот";
-                        break;
-                    case 7:
-                        hundredsStringFormat = "семьсот";
-                        break;
-                    case 8:
-                        hundredsStringFormat = "восемьсот";
-                        break;
-                    case 9:
-                        hundredsStringFormat = "девятьсот";
-                        break;
-                    default:
-                        hundredsStringFormat = "";
-                        break;
-                }
-                stringBuilder.append(hundredsStringFormat);
-                if (stringBuilder.charAt(stringBuilder.length() - 1) != ' ') {
-                    stringBuilder.append(" ");
-                }
+        List<String> stringList = new ArrayList<>();
+        int copyOfNumber = number;
+        int thousandsCount = copyOfNumber / 1000;
+        if (thousandsCount > 0) {
+            stringList.add(stringFormatIntegerMap.get(1000 * thousandsCount));
+        }
+        copyOfNumber %= 1000;
+        int hundredsCount = copyOfNumber / 100;
+        if (hundredsCount > 0) {
+            stringList.add(stringFormatIntegerMap.get(100 * hundredsCount));
+        }
+        copyOfNumber %= 100;
+        if (copyOfNumber >= 10 && copyOfNumber<=19) {
+            stringList.add(stringFormatIntegerMap.get(copyOfNumber));
+        } else {
+            int tensCount = copyOfNumber / 10;
+            if (tensCount > 0) {
+                stringList.add(stringFormatIntegerMap.get(10 * tensCount));
             }
-            String tensStringFormat;
-            switch (tens) {
-                case 1:
-                    switch (ones) {
-                        case 1:
-                            tensStringFormat = "одиннадцать";
-                            break;
-                        case 2:
-                            tensStringFormat = "двенадцать";
-                            break;
-                        case 3:
-                            tensStringFormat = "тринадцать";
-                            break;
-                        case 4:
-                            tensStringFormat = "четырнадцать";
-                            break;
-                        case 5:
-                            tensStringFormat = "пятнадцать";
-                            break;
-                        case 6:
-                            tensStringFormat = "шестнадцать";
-                            break;
-                        case 7:
-                            tensStringFormat = "семнадцать";
-                            break;
-                        case 8:
-                            tensStringFormat = "восемнадцать";
-                            break;
-                        case 9:
-                            tensStringFormat = "девятнадцать";
-                            break;
-                        default:
-                            tensStringFormat = "десять";
-                            break;
-                    }
-                    break;
-                case 2:
-                    tensStringFormat = "двадцать";
-                    break;
-                case 3:
-                    tensStringFormat = "тридцать";
-                    break;
-                case 4:
-                    tensStringFormat = "сорок";
-                    break;
-                case 5:
-                    tensStringFormat = "пятьдесят";
-                    break;
-                case 6:
-                    tensStringFormat = "шестьдесят";
-                    break;
-                case 7:
-                    tensStringFormat = "семьдесят";
-                    break;
-                case 8:
-                    tensStringFormat = "восемьдесят";
-                    break;
-                case 9:
-                    tensStringFormat = "девяносто";
-                    break;
-                default:
-                    tensStringFormat = "";
-                    break;
-            }
-            stringBuilder.append(tensStringFormat);
-            if (stringBuilder.charAt(stringBuilder.length() - 1) != ' ') {
-                stringBuilder.append(" ");
+            copyOfNumber %= 10;
+            if (copyOfNumber > 0) {
+                stringList.add(stringFormatIntegerMap.get(copyOfNumber));
             }
         }
-        String onesStringFormat;
-        if (tens != 1) {
-            switch (ones) {
-                case 1:
-                    onesStringFormat = "один";
-                    break;
-                case 2:
-                    onesStringFormat = "два";
-                    break;
-                case 3:
-                    onesStringFormat = "три";
-                    break;
-                case 4:
-                    onesStringFormat = "четыре";
-                    break;
-                case 5:
-                    onesStringFormat = "пять";
-                    break;
-                case 6:
-                    onesStringFormat = "шесть";
-                    break;
-                case 7:
-                    onesStringFormat = "семь";
-                    break;
-                case 8:
-                    onesStringFormat = "восемь";
-                    break;
-                case 9:
-                    onesStringFormat = "девять";
-                    break;
-                default:
-                    onesStringFormat = "";
-                    break;
-            }
-            stringBuilder.append(onesStringFormat);
-            if (stringBuilder.charAt(stringBuilder.length() - 1) != ' ') {
-                stringBuilder.append(" ");
-            }
-        }
-        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-        return stringBuilder.toString();
+        return TextUtils.join(" ", stringList);
     }
 }
