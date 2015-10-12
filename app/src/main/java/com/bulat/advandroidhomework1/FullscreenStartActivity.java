@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import java.util.concurrent.TimeUnit;
 
 public class FullscreenStartActivity extends AppCompatActivity {
+    private boolean isVisible;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,16 +28,36 @@ public class FullscreenStartActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    startMainActivity();
+                    goToMainActivity();
                 }
             });
             return null;
         }
     }
 
-    void startMainActivity() {
-        Intent i = new Intent(this, MainActivity.class);
-        startActivity(i);
-        finish();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        isVisible = true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isVisible = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isVisible = false;
+    }
+
+    void goToMainActivity() {
+        if (isVisible) {
+            Intent i = new Intent(this, MainActivity.class);
+            startActivity(i);
+            finish();
+        }
     }
 }
