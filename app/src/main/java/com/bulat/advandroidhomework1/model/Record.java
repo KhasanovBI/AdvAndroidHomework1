@@ -12,6 +12,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -78,7 +79,6 @@ public class Record {
                         }
                         break;
                 }
-
                 eventType = xmlResourceParser.next();
             }
         } catch (XmlPullParserException e) {
@@ -89,30 +89,24 @@ public class Record {
     }
 
     private String getStringFormatOfInteger(Integer number) {
-        List<String> stringList = new ArrayList<>();
-        int copyOfNumber = number;
-        int thousandsCount = copyOfNumber / 1000;
-        if (thousandsCount > 0) {
-            stringList.add(stringFormatIntegerMap.get(1000 * thousandsCount));
+        LinkedList<Integer> roundedIntegersList = new LinkedList<>();
+        int multiplier = 1;
+        if (number / 10 % 10 == 1) {
+            multiplier = 100;
+            roundedIntegersList.push(number % multiplier);
+            number /= multiplier;
         }
-        copyOfNumber %= 1000;
-        int hundredsCount = copyOfNumber / 100;
-        if (hundredsCount > 0) {
-            stringList.add(stringFormatIntegerMap.get(100 * hundredsCount));
-        }
-        copyOfNumber %= 100;
-        if (copyOfNumber >= 10 && copyOfNumber<=19) {
-            stringList.add(stringFormatIntegerMap.get(copyOfNumber));
-        } else {
-            int tensCount = copyOfNumber / 10;
-            if (tensCount > 0) {
-                stringList.add(stringFormatIntegerMap.get(10 * tensCount));
+        for (; number > 0; multiplier *= 10) {
+            int roundedInteger = number % 10 * multiplier;
+            if (roundedInteger != 0) {
+                roundedIntegersList.push(roundedInteger);
             }
-            copyOfNumber %= 10;
-            if (copyOfNumber > 0) {
-                stringList.add(stringFormatIntegerMap.get(copyOfNumber));
-            }
+            number = number / 10;
         }
-        return TextUtils.join(" ", stringList);
+        List<String> stringsList = new ArrayList<>();
+        while (roundedIntegersList.size() > 0) {
+            stringsList.add(stringFormatIntegerMap.get(roundedIntegersList.pop()));
+        }
+        return TextUtils.join(" ", stringsList);
     }
 }
