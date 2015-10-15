@@ -88,7 +88,7 @@ public class Record {
         }
     }
 
-    private String getStringFormatOfInteger(Integer number) {
+    private static String getStringFormatOfInteger(Integer number) {
         if (number > 1000 || number < 0) {
             return null;
         }

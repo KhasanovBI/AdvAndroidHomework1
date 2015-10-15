@@ -15,6 +15,7 @@ import java.util.List;
 
 public class MainActivity extends Activity {
     private RecyclerView mRecyclerView;
+    private int RECORDS_COUNT = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +36,7 @@ public class MainActivity extends Activity {
     }
 
     private void populateIntegers(List<Record> list) {
-        for (int i = 1; i <= 1000; ++i) {
+        for (int i = 1; i <= RECORDS_COUNT; ++i) {
             list.add(new Record(i));
         }
     }

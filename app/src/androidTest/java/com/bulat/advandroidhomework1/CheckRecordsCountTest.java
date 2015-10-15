@@ -1,5 +1,6 @@
 package com.bulat.advandroidhomework1;
 
+import android.app.Activity;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,8 @@ import junit.framework.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.lang.reflect.Field;
 
 /**
  * Created by bulat on 11.10.15.
@@ -22,7 +25,20 @@ public class CheckRecordsCountTest {
 
     @Test
     public void isRecordsCountCorrect() {
-        RecyclerView recyclerView = (RecyclerView) mActivityRule.getActivity().findViewById(R.id.recycler_view);
-        Assert.assertEquals(1000, recyclerView.getAdapter().getItemCount());
+        Activity mainActivity = mActivityRule.getActivity();
+        RecyclerView recyclerView = (RecyclerView) mainActivity.findViewById(R.id.recycler_view);
+        int RECORDS_COUNT = 0;
+        try {
+            Field field = mainActivity.getClass().getDeclaredField("RECORDS_COUNT");
+            boolean isAccessible = field.isAccessible();
+            field.setAccessible(true);
+            RECORDS_COUNT = (int) field.get(mainActivity);
+            field.setAccessible(isAccessible);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        Assert.assertEquals(RECORDS_COUNT, recyclerView.getAdapter().getItemCount());
     }
 }
