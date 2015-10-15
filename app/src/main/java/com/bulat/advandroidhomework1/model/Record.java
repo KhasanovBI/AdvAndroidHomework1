@@ -89,6 +89,9 @@ public class Record {
     }
 
     private String getStringFormatOfInteger(Integer number) {
+        if (number > 1000 || number < 0) {
+            return null;
+        }
         LinkedList<Integer> roundedIntegersList = new LinkedList<>();
         int multiplier = 1;
         if (number / 10 % 10 == 1) {
